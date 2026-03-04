@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Sign In — Task Manager{% endblock %}
+
+{% block content %}
+  <div class="min-vh-100 d-flex align-items-center justify-content-center"
+       style="margin: -1.5rem;">
+    <div class="col-12 col-md-5 col-lg-4">
+      <div class="card shadow-sm" style="border-radius: 16px;">
+        <div class="card-body p-4 p-md-5">
+
+          <!-- Logo -->
+          <div class="text-center mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"
+                 viewBox="0 0 24 24" fill="none" stroke="#206bc4"
+                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"/>
+              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/>
+            </svg>
+            <h2 class="fw-bold mt-3 mb-1">Welcome back</h2>
+            <p class="text-muted">Sign in to your account</p>
+          </div>
+
+          <!-- Form -->
+          <form method="post">
+            {% csrf_token %}
+
+            {% if form.errors %}
+              <div class="alert alert-danger" role="alert">
+                Invalid username or password.
+              </div>
+            {% endif %}
+
+            <div class="mb-3">
+              <label class="form-label fw-medium">Username</label>
+              <input type="text"
+                     name="username"
+                     class="form-control form-control-lg"
+                     style="border-radius: 10px;"
+                     placeholder="Enter username"
+                     autofocus>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label fw-medium">Password</label>
+              <input type="password"
+                     name="password"
+                     class="form-control form-control-lg"
+                     style="border-radius: 10px;"
+                     placeholder="Enter password">
+            </div>
+
+            <button type="submit"
+                    class="btn btn-primary btn-lg w-100"
+                    style="border-radius: 10px; font-weight: 600;">
+              Sign In
+            </button>
+
+            {% if next %}
+              <input type="hidden" name="next" value="{{ next }}">
+            {% endif %}
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

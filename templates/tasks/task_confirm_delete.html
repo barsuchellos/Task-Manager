@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block title %}Delete Task — Task Manager{% endblock %}
+{% block nav_tasks %}active{% endblock %}
+
+{% block content %}
+  <div class="page-header mt-3 mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="text-muted mb-1">
+          <a href="{% url 'tasks:task-list' %}" class="text-muted">Tasks</a>
+          / <a href="{% url 'tasks:task-detail' pk=task.pk %}" class="text-muted">{{ task.name }}</a>
+          / Delete
+        </div>
+        <h2 class="page-title fw-bold">Delete Task</h2>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-lg-6">
+      <div class="card border-danger">
+        <div class="card-body p-4">
+          <h3 class="fw-bold mb-2">Are you sure?</h3>
+          <p class="text-muted mb-4">
+            You are about to delete task
+            <strong>{{ task.name }}</strong>.
+            This action cannot be undone.
+          </p>
+          <div class="d-flex gap-2">
+            <form method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-danger px-4">
+                Yes, delete
+              </button>
+            </form>
+            <a href="{% url 'tasks:task-detail' pk=task.pk %}"
+               class="btn btn-outline-secondary">
+              Cancel
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}

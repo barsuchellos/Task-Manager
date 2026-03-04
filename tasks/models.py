@@ -3,7 +3,7 @@ from django.db import models
 
 
 class TaskType(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
 
     class Meta:
         verbose_name = "Task Type"
@@ -45,6 +45,13 @@ class Task(models.Model):
         to="Worker",
         related_name="tasks"
     )
+    team = models.ForeignKey(
+        "Team",
+        on_delete=models.CASCADE,
+        related_name="tasks",
+        null=True,
+        blank=True
+    )
 
     class Meta:
         ordering = ["deadline", "name"]
@@ -68,3 +75,15 @@ class Worker(AbstractUser):
 
     def __str__(self) -> str:
         return f"{self.username} ({self.position})"
+
+
+class Team(models.Model):
+    name = models.CharField(max_length=100)
+    members = models.ManyToManyField(
+        Worker,
+        related_name="teams",
+        blank=True
+    )
+
+    def __str__(self):
+        return self.name

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Task Types — Task Manager{% endblock %}
+
+{% block content %}
+  <div class="page-header mt-3 mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title fw-bold">Task Types</h2>
+        <div class="text-muted mt-1">All available task types</div>
+      </div>
+      <div class="col-auto">
+        <a href="{% url 'tasks:task-type-create' %}" class="btn btn-primary">
+          + New Type
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-vcenter card-table">
+        <thead>
+        <tr>
+          <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for task_type in types_list %}
+          <tr>
+            <td class="fw-medium">{{ task_type.name }}</td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td class="text-center text-muted py-4">
+              No task types yet.
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% endblock %}

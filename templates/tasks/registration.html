@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}Sign Up — Task Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-3">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title fw-bold">Create account</h3>
+                <p class="text-muted mb-0">Join your team on TaskManager</p>
+            </div>
+            <div class="card-body">
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% if form.errors %}
+                    <div class="alert alert-danger mb-3">
+                        {% for field, errors in form.errors.items %}
+                            {% for error in errors %}
+                                <div>{{ error }}</div>
+                            {% endfor %}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label">First Name</label>
+                            <input type="text" name="first_name" class="form-control"
+                                   value="{{ form.first_name.value|default:'' }}"
+                                   placeholder="John">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Last Name</label>
+                            <input type="text" name="last_name" class="form-control"
+                                   value="{{ form.last_name.value|default:'' }}"
+                                   placeholder="Doe">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Username *</label>
+                            <input type="text" name="username"
+                                   class="form-control {% if form.username.errors %}is-invalid{% endif %}"
+                                   value="{{ form.username.value|default:'' }}"
+                                   placeholder="john_doe">
+                            {% if form.username.errors %}
+                                <div class="invalid-feedback">{{ form.username.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Email</label>
+                            <input type="email" name="email" class="form-control"
+                                   value="{{ form.email.value|default:'' }}"
+                                   placeholder="john@example.com">
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-6">
+                            <label class="form-label">Password *</label>
+                            <input type="password" name="password1"
+                                   class="form-control {% if form.password1.errors %}is-invalid{% endif %}"
+                                   placeholder="Enter password">
+                            {% if form.password1.errors %}
+                                <div class="invalid-feedback">{{ form.password1.errors|join:", " }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Confirm Password *</label>
+                            <input type="password" name="password2" class="form-control"
+                                   placeholder="Repeat password">
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Position</label>
+                        <select name="position" class="form-select">
+                            <option value="">Select position...</option>
+                            {% for choice in form.fields.position.queryset %}
+                                <option value="{{ choice.pk }}">{{ choice }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-3">
+                        <button type="submit" class="btn btn-primary px-4">
+                            Create Account
+                        </button>
+                        <span class="text-muted">Already have an account?
+                            <a href="{% url 'login' %}">Sign in</a>
+                        </span>
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

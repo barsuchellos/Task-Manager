@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% block title %}{{ task.name }} — Task Manager{% endblock %}
+{% block nav_tasks %}active{% endblock %}
+
+{% block content %}
+  <div class="page-header mt-3 mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="text-muted mb-1">
+          <a href="{% url 'tasks:task-list' %}" class="text-muted">Tasks</a>
+          / {{ task.name }}
+        </div>
+        <h2 class="page-title fw-bold">{{ task.name }}</h2>
+      </div>
+      <div class="col-auto d-flex gap-2">
+        <a href="{% url 'tasks:task-update' pk=task.pk %}"
+           class="btn btn-outline-primary">
+          Edit
+        </a>
+        <a href="{% url 'tasks:task-delete' pk=task.pk %}"
+           class="btn btn-outline-danger">
+          Delete
+        </a>
+        <form method="post" action="{% url 'tasks:task-toggle' pk=task.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-success">
+            {% if task.is_completed %}
+              Mark as Pending
+            {% else %}
+              Mark as Done ✓
+            {% endif %}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4">
+    <div class="col-lg-8">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title fw-bold">Description</h3>
+        </div>
+        <div class="card-body">
+          {% if task.description %}
+            <p class="text-muted">{{ task.description }}</p>
+          {% else %}
+            <p class="text-muted fst-italic">No description provided.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title fw-bold">Details</h3>
+        </div>
+        <div class="card-body">
+
+          <div class="mb-3">
+            <div class="text-muted small mb-1">Status</div>
+            {% if task.is_completed %}
+              <span class="badge bg-success">Completed</span>
+            {% elif task.is_overdue %}
+              <span class="badge bg-danger">Overdue</span>
+            {% else %}
+              <span class="badge bg-warning">In Progress</span>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <div class="text-muted small mb-1">Priority</div>
+            {% if task.priority == "urgent" %}
+              <span class="badge badge-urgent">Urgent</span>
+            {% elif task.priority == "high" %}
+              <span class="badge badge-high">High</span>
+            {% elif task.priority == "medium" %}
+              <span class="badge badge-medium">Medium</span>
+            {% else %}
+              <span class="badge badge-low">Low</span>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <div class="text-muted small mb-1">Deadline</div>
+            <div class="fw-medium {% if task.is_overdue %}text-danger{% endif %}">
+              {{ task.deadline }}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="text-muted small mb-1">Task Type</div>
+            <span class="badge bg-blue-lt">{{ task.task_type }}</span>
+          </div>
+
+          <div class="mb-3">
+            <div class="text-muted small mb-1">Team</div>
+            {% if task.team %}
+              <span class="badge bg-azure-lt">{{ task.team }}</span>
+            {% else %}
+              <span class="text-muted">—</span>
+            {% endif %}
+          </div>
+
+          <div class="mb-3">
+            <div class="text-muted small mb-1">Assignees</div>
+            <div class="d-flex flex-wrap gap-1">
+              {% for worker in task.assignees.all %}
+                <a href="{% url 'tasks:worker-detail' pk=worker.pk %}"
+                   class="badge bg-lime-lt text-decoration-none">
+                  {{ worker.username }}
+                </a>
+              {% empty %}
+                <span class="text-muted">No assignees</span>
+              {% endfor %}
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+{% endblock %}

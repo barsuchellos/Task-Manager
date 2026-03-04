@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+{% block title %}{{ worker.username }} — Task Manager{% endblock %}
+{% block nav_workers %}active{% endblock %}
+
+{% block content %}
+  <div class="page-header mt-3 mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <div class="text-muted mb-1">
+          <a href="{% url 'tasks:worker-list' %}" class="text-muted">Team</a>
+          / {{ worker.username }}
+        </div>
+        <h2 class="page-title fw-bold">{{ worker.first_name }} {{ worker.last_name }}</h2>
+      </div>
+      {% if request.user == worker %}
+        <div class="col-auto">
+          <a href="{% url 'tasks:worker-update' %}" class="btn btn-outline-primary">
+            Edit Profile
+          </a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Profile info -->
+    <div class="col-lg-4">
+      <div class="card">
+        <div class="card-body p-4 text-center">
+                <span class="avatar avatar-xl mb-3"
+                      style="background: #206bc4; color: white; font-size: 1.5rem; width:64px; height:64px; display:inline-flex; align-items:center; justify-content:center; border-radius:50%;">
+                    {{ worker.username|first|upper }}
+                </span>
+          <h3 class="fw-bold mb-1">{{ worker.first_name }} {{ worker.last_name }}</h3>
+          <div class="text-muted mb-3">@{{ worker.username }}</div>
+          {% if worker.position %}
+            <span class="badge bg-blue-lt">{{ worker.position }}</span>
+          {% endif %}
+        </div>
+        <div class="card-footer">
+          <div class="row text-center">
+            <div class="col">
+              <div class="fw-bold">{{ worker.tasks.count }}</div>
+              <div class="text-muted small">Tasks</div>
+            </div>
+            <div class="col">
+              <div class="fw-bold">{{ worker.teams.count }}</div>
+              <div class="text-muted small">Teams</div>
+            </div>
+            <div class="col">
+              <div class="fw-bold">{{ worker.tasks.filter.is_completed.count }}</div>
+              <div class="text-muted small">Done</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact info -->
+      <div class="card mt-3">
+        <div class="card-header">
+          <h3 class="card-title fw-bold">Contact</h3>
+        </div>
+        <div class="card-body">
+          <div class="mb-2">
+            <div class="text-muted small">Email</div>
+            <div>{{ worker.email|default:"—" }}</div>
+          </div>
+          <div class="mb-2">
+            <div class="text-muted small">Member since</div>
+            <div>{{ worker.date_joined|date:"d M Y" }}</div>
+          </div>
+          <div>
+            <div class="text-muted small">Last login</div>
+            <div>{{ worker.last_login|date:"d M Y"|default:"—" }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Teams and Tasks -->
+    <div class="col-lg-8">
+
+      <!-- Teams -->
+      <div class="card mb-3">
+        <div class="card-header">
+          <h3 class="card-title fw-bold">Teams</h3>
+        </div>
+        <div class="card-body">
+          {% for team in worker.teams.all %}
+            <span class="badge bg-azure-lt me-1">{{ team }}</span>
+          {% empty %}
+            <span class="text-muted">Not in any team yet</span>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Active tasks -->
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title fw-bold">Active Tasks</h3>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-vcenter card-table">
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Priority</th>
+              <th>Deadline</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for task in worker.tasks.all %}
+              {% if not task.is_completed %}
+                <tr>
+                  <td>
+                    <a href="{% url 'tasks:task-detail' pk=task.pk %}"
+                       class="fw-medium text-decoration-none">
+                      {{ task.name }}
+                    </a>
+                  </td>
+                  <td>
+                    {% if task.priority == "urgent" %}
+                      <span class="badge badge-urgent">Urgent</span>
+                    {% elif task.priority == "high" %}
+                      <span class="badge badge-high">High</span>
+                    {% elif task.priority == "medium" %}
+                      <span class="badge badge-medium">Medium</span>
+                    {% else %}
+                      <span class="badge badge-low">Low</span>
+                    {% endif %}
+                  </td>
+                  <td class="{% if task.is_overdue %}text-danger{% endif %}">
+                    {{ task.deadline }}
+                  </td>
+                </tr>
+              {% endif %}
+            {% empty %}
+              <tr>
+                <td colspan="3" class="text-center text-muted py-3">
+                  No active tasks
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

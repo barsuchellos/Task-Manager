@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block title %}Team — Task Manager{% endblock %}
+{% block nav_workers %}active{% endblock %}
+
+{% block content %}
+  <div class="page-header mt-3 mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title fw-bold">Team</h2>
+        <div class="text-muted mt-1">People in your teams</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-vcenter card-table">
+        <thead>
+        <tr>
+          <th>Name</th>
+          <th>Position</th>
+          <th>Teams</th>
+          <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for worker in workers %}
+          <tr>
+            <td>
+              <div class="d-flex align-items-center">
+                            <span class="avatar avatar-sm me-2"
+                                  style="background: #206bc4; color: white; font-size: 0.75rem;">
+                                {{ worker.username|first|upper }}
+                            </span>
+                <div>
+                  <div class="fw-medium">
+                    {{ worker.first_name }} {{ worker.last_name }}
+                  </div>
+                  <div class="text-muted small">{{ worker.username }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              {% if worker.position %}
+                <span class="badge bg-blue-lt">{{ worker.position }}</span>
+              {% else %}
+                <span class="text-muted">—</span>
+              {% endif %}
+            </td>
+            <td>
+              {% for team in worker.teams.all %}
+                <span class="badge bg-azure-lt">{{ team }}</span>
+              {% endfor %}
+            </td>
+            <td>
+              <a href="{% url 'tasks:worker-detail' pk=worker.pk %}"
+                 class="btn btn-sm btn-outline-primary">
+                View
+              </a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="4" class="text-center text-muted py-4">
+              No team members yet.
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  {% include "includes/pagination.html" with page_obj=page_obj %}
+{% endblock %}

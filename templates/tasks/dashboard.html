@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Task Manager{% endblock %}
+{% block nav_index %}active{% endblock %}
+
+{% block content %}
+
+  <div class="page-header d-print-none mt-3 mb-4">
+    <div class="row align-items-center">
+      <div class="col">
+        <h2 class="page-title fw-bold">
+          Welcome back, {{ request.user.first_name|default:request.user.username }} 👋
+        </h2>
+        <div class="text-muted mt-1">Here's what's happening with your team today.</div>
+      </div>
+      <div class="col-auto">
+        <a href="{% url 'tasks:task-create' %}" class="btn btn-primary">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+               viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" class="me-2">
+            <line x1="12" y1="5" x2="12" y2="19"/>
+            <line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Task
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-4">
+    <div class="col-sm-6 col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="subheader text-muted">Total Tasks</div>
+          </div>
+          <div class="h1 mb-0 fw-bold">{{ info_tasks.total }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="subheader text-muted">Completed</div>
+          </div>
+          <div class="h1 mb-0 fw-bold text-success">{{ info_tasks.completed }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="subheader text-muted">Pending</div>
+          </div>
+          <div class="h1 mb-0 fw-bold text-warning">{{ info_tasks.pending_tasks }}</div>
+        </div>
+      </div>
+    </div>
+    <div class="col-sm-6 col-lg-3">
+      <div class="card">
+        <div class="card-body">
+          <div class="d-flex align-items-center mb-3">
+            <div class="subheader text-muted">Overdue</div>
+          </div>
+          <div class="h1 mb-0 fw-bold text-danger">{{ info_tasks.overdue_tasks }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {% if info_urgent_tasks %}
+    <div class="card mb-4">
+      <div class="card-header">
+        <h3 class="card-title fw-bold">
+          🔴 Urgent Tasks
+        </h3>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-vcenter card-table">
+          <thead>
+          <tr>
+            <th>Task</th>
+            <th>Type</th>
+            <th>Deadline</th>
+            <th>Assignees</th>
+            <th></th>
+          </tr>
+          </thead>
+          <tbody>
+          {% for task in info_urgent_tasks %}
+            <tr>
+              <td class="fw-medium">{{ task.name }}</td>
+              <td><span class="badge bg-blue-lt">{{ task.task_type }}</span></td>
+              <td class="{% if task.is_overdue %}text-danger fw-bold{% endif %}">
+                {{ task.deadline }}
+              </td>
+              <td>
+                {% for worker in task.assignees.all %}
+                  <span class="badge bg-azure-lt">{{ worker.username }}</span>
+                {% endfor %}
+              </td>
+              <td>
+                <a href="{% url 'tasks:task-detail' pk=task.pk %}"
+                   class="btn btn-sm btn-outline-primary">
+                  View
+                </a>
+              </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="row g-3">
+    <div class="col-12">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title fw-bold">Team</h3>
+          <div class="card-options">
+            <a href="{% url 'tasks:worker-list' %}" class="btn btn-sm btn-outline-primary">
+              View all
+            </a>
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="text-muted">
+            <strong>{{ info_workers }}</strong> team members
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+{% endblock %}
