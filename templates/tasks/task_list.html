@@ -17,6 +17,61 @@
     </div>
   </div>
 
+  <div class="card mb-3">
+    <div class="card-body">
+      <form method="get">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label text-muted small">Search by name</label>
+            <input type="text" name="task_name" class="form-control"
+                   placeholder="Search tasks..."
+                   value="{{ request.GET.task_name|default:'' }}">
+          </div>
+          <div class="col-md-3">
+            <label class="form-label text-muted small">Task Type</label>
+            <select name="task_type" class="form-select">
+              <option value="">All task types</option>
+              {% for choice in form.fields.task_type.queryset %}
+                <option value="{{ choice.pk }}"
+                        {% if request.GET.task_type == choice.pk|stringformat:"s" %}selected{% endif %}>
+                  {{ choice }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-3">
+            <label class="form-label text-muted small">Assignee</label>
+            <div class="border rounded p-2" style="max-height: 120px; overflow-y: auto;">
+              {% for choice in form.fields.workers.queryset %}
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox"
+                         name="workers" value="{{ choice.pk }}"
+                         id="worker_{{ choice.pk }}"
+                         {% if choice.pk|stringformat:"s" in selected_workers %}checked{% endif %}>
+                  <label class="form-check-label" for="worker_{{ choice.pk }}">
+                    {{ choice.username }}
+                  </label>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">
+              Filter
+            </button>
+          </div>
+        </div>
+        {% if request.GET.task_name or request.GET.task_type or request.GET.workers %}
+          <div class="mt-2">
+            <a href="{% url 'tasks:task-list' %}" class="text-muted small">
+              Clear filters ×
+            </a>
+          </div>
+        {% endif %}
+      </form>
+    </div>
+  </div>
+
   <div class="card">
     <div class="table-responsive">
       <table class="table table-vcenter card-table">
@@ -32,7 +87,7 @@
         </thead>
         <tbody>
         {% for task in tasks %}
-          <tr class="{% if task.is_overdue %}table-danger{% endif %}">
+          <tr>
             <td>
               <a href="{% url 'tasks:task-detail' pk=task.pk %}"
                  class="fw-medium text-decoration-none">
@@ -50,9 +105,7 @@
                 <span class="badge badge-low">Low</span>
               {% endif %}
             </td>
-            <td class="{% if task.is_overdue %}text-danger fw-bold{% endif %}">
-              {{ task.deadline }}
-            </td>
+            <td>{{ task.deadline }}</td>
             <td>
               {% if task.team %}
                 <span class="badge bg-azure-lt">{{ task.team }}</span>
@@ -72,7 +125,7 @@
         {% empty %}
           <tr>
             <td colspan="6" class="text-center text-muted py-4">
-              No tasks yet. Create your first task!
+              No tasks found.
             </td>
           </tr>
         {% endfor %}

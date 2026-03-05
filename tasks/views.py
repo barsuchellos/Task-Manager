@@ -1,10 +1,11 @@
 from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
 from tasks.forms import TaskCreateForm, TaskUpdateForm, WorkerRegistrationForm, FormWorkerUpdate, PositionCreateForm, \
-    TaskTypesCreateForm
+    TaskTypesCreateForm, TaskFilterForm
 from tasks.selectors import get_all_tasks, get_task, get_workers, get_worker_by_id, get_worker_tasks, get_total_workers, \
     get_urgent_tasks, get_positions, get_task_types_list
 from tasks.services import create_task, update_task, delete_task, task_toggle_update, create_workers, worker_update, \
@@ -24,8 +25,31 @@ def index(request) -> HttpResponse:
 
 @login_required
 def task_list(request) -> HttpResponse:
-    tasks = get_all_tasks(request.user)
-    context = {"tasks": tasks}
+    form = TaskFilterForm(request.GET, user=request.user)
+    print("form.errors", form.errors)
+    print("form.is_valid()", form.is_valid())
+    print("request.GET.getlist(workers)",request.GET.getlist("workers"))
+    if form.is_valid():
+        tasks = get_all_tasks(
+            user=request.user,
+            task_name=form.cleaned_data.get("task_name"),
+            task_type=form.cleaned_data.get("task_type"),
+            worker=form.cleaned_data.get("workers")
+        )
+    else:
+        tasks = get_all_tasks(request.user)
+
+    print("selected_workers", request.GET.getlist("workers"))
+    paginator = Paginator(tasks, 7)
+    page_obj = paginator.get_page(request.GET.get("page"))
+
+    context = {
+        "tasks": page_obj,
+        "form": form,
+        "page_obj": page_obj,
+        "selected_workers": request.GET.getlist("workers"),
+    }
+
     return render(request, "tasks/task_list.html", context=context)
 
 

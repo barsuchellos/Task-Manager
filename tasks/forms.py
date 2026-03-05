@@ -2,6 +2,7 @@ from django import forms
 from django.forms import ModelForm
 
 from tasks.models import Task, Worker, Position, TaskType
+from tasks.selectors import get_workers
 
 
 class TaskCreateForm(ModelForm):
@@ -83,3 +84,26 @@ class TaskTypesCreateForm(ModelForm):
     class Meta:
         model = TaskType
         fields = ["name"]
+
+
+class TaskFilterForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop("user")
+        super().__init__(*args, **kwargs)
+        self.fields["workers"].queryset = get_workers(user)
+
+    task_name = forms.CharField(
+        label="Find Task",
+        max_length=50,
+        help_text="Search for any name task",
+        required=False
+    )
+    task_type = forms.ModelChoiceField(
+        queryset=TaskType.objects.all(),
+        empty_label="All task types",
+        required=False
+    )
+    workers = forms.ModelMultipleChoiceField(
+        queryset=Worker.objects.none(),
+        required=False
+    )

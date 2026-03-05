@@ -61,13 +61,14 @@ def worker_update(worker, form_data):
 
     worker.save()
 
+
 def create_positions(form):
     return Position.objects.create(
         name=form["name"]
     )
 
+
 def create_task_types(form):
     return TaskType.objects.create(
         name=form["name"]
     )
-
