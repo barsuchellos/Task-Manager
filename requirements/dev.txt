@@ -1,4 +1,4 @@
 -r base.txt
-django-debug-toolbar
-pytest
-pytest-django
+django-debug-toolbar==6.2.0
+pytest==9.0.2
+pytest-django==4.12.0
