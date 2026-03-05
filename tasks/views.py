@@ -4,12 +4,12 @@ from django.core.paginator import Paginator
 from django.http import HttpResponse
 from django.shortcuts import render, redirect
 
-from tasks.forms import TaskCreateForm, TaskUpdateForm, WorkerRegistrationForm, FormWorkerUpdate, PositionCreateForm, \
-    TaskTypesCreateForm, TaskFilterForm
-from tasks.selectors import get_all_tasks, get_task, get_workers, get_worker_by_id, get_worker_tasks, get_total_workers, \
-    get_urgent_tasks, get_positions, get_task_types_list
-from tasks.services import create_task, update_task, delete_task, task_toggle_update, create_workers, worker_update, \
-    create_positions, create_task_types
+from tasks.forms import (TaskCreateForm, TaskUpdateForm, WorkerRegistrationForm, FormWorkerUpdate, PositionCreateForm,
+    TaskTypesCreateForm, TaskFilterForm)
+from tasks.selectors import (get_all_tasks, get_task, get_workers, get_worker_by_id, get_worker_tasks, get_total_workers,
+    get_urgent_tasks, get_positions, get_task_types_list)
+from tasks.services import (create_task, update_task, delete_task, task_toggle_update, create_workers, worker_update,
+    create_positions, create_task_types)
 
 
 def index(request) -> HttpResponse:
