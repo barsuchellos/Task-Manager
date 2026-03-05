@@ -17,8 +17,7 @@ def get_all_tasks(user, task_name=None, task_type=None, worker=None):
     if task_type:
         result = result.filter(task_type=task_type)
     if worker:
-        for w in worker:
-            result = result.filter(assignees=w)
+        result = result.filter(assignees__id__in=worker)
 
     return result.select_related("task_type").prefetch_related("assignees").distinct()
 
