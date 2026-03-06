@@ -7,7 +7,8 @@
 
 A team-oriented task management web application built with Django. Users can manage tasks, track progress, and collaborate within teams — with access control based on team membership.
 
-> 🌐 **Live Demo:** coming soon after deployment  
+## 🚀 Live Demo
+👉 [https://task-manager-7xbn.onrender.com/](https://task-manager-7xbn.onrender.com/)
 > 🔑 **Test credentials:** `john_dev` / `SunnyDay23`
 
 ---
