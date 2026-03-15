@@ -26,7 +26,7 @@ class AdminTask(admin.ModelAdmin):
 class AdminWorker(UserAdmin):
     list_display = UserAdmin.list_display + ("position",)
     search_fields = ("username", "position", "email")
-
+    fieldsets = UserAdmin.fieldsets + (("Position", {"fields": ("position",)}),)
 
 @admin.register(Team)
 class AdminTeam(admin.ModelAdmin):
